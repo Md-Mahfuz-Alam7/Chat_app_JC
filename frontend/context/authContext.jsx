@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { login, register } from "../services/authService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
+import { connectSocket, disconnectSocket } from "../socket/socket";
 
 export const AuthContext = createContext({
     token: null,
@@ -33,6 +34,7 @@ export const AuthProvider = ({ children }) => {
                     return;
                 }
                 setToken(storedToken);
+                await connectSocket();
                 setUser(decode.user);
 
                 gotoHomePage();
@@ -74,12 +76,14 @@ export const AuthProvider = ({ children }) => {
     const signIn = async (email, password) => {
         const response = await login(email, password);
         await updateToken(response.token);
+        await connectSocket();
         router.replace("(main)/home");
     };
 
     const signUp = async (email, password, name, avatar = null) => {
         const response = await register(email, password, name, avatar);
         await updateToken(response.token);
+        await connectSocket();
         router.replace("(main)/home");
     }
 
@@ -87,6 +91,7 @@ export const AuthProvider = ({ children }) => {
         setToken(null);
         setUser(null);
         await AsyncStorage.removeItem("token");
+        disconnectSocket();
         router.replace("/(auth)/welcome")
 
     }

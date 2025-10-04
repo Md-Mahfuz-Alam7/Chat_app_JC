@@ -4,6 +4,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const authRoutes = require('./routes/auth.routes');
 const connectDB = require('./config/db');
+const { InitializeSocket } = require('./socket/socket');
 dotenv.config();
 
 
@@ -24,6 +25,9 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 const server = http.createServer(app);
+
+// listen to socket event
+InitializeSocket(server);
 
 connectDB()
     .then(() => {
