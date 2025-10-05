@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, StatusBar, } from "react-native";
+import { StyleSheet, Text, View, StatusBar } from "react-native";
 import React, { useEffect } from "react";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { colors } from "../constants/theme";
@@ -37,5 +37,5 @@ const styles = StyleSheet.create({
     logo: {
         height: "23%",
         aspectRatio: 1,
-    },
+    }
 });

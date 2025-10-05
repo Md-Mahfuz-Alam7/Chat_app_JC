@@ -14,11 +14,11 @@ export const login = async (email, password) => {
         });
         return response.data;
     } catch (error) {
-        console.log("Login error:", error.message);
+        console.log('Login error:', error.message);
         if (error.code === 'NETWORK_ERROR' || error.message === 'Network Error') {
             throw new Error('Cannot connect to server. Please check if the backend is running.');
         }
-        const msg = error?.response?.data?.message || "Login Failed";
+        const msg = error?.response?.data?.message || 'Login Failed';
         throw new Error(msg);
     }
 };
@@ -38,11 +38,11 @@ export const register = async (email, password, name, avatar) => {
         });
         return response.data;
     } catch (error) {
-        console.log("Registration error:", error.message);
+        console.log('Registration error:', error.message);
         if (error.code === 'NETWORK_ERROR' || error.message === 'Network Error') {
             throw new Error('Cannot connect to server. Please check if the backend is running.');
         }
-        const msg = error?.response?.data?.message || "Registration Failed";
+        const msg = error?.response?.data?.message || 'Registration Failed';
         throw new Error(msg);
     }
 };

@@ -24,12 +24,12 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const loadToken = async () => {
-        const storedToken = await AsyncStorage.getItem("token");
+        const storedToken = await AsyncStorage.getItem('token');
         if (storedToken) {
             try{
                 const decode = jwtDecode(storedToken);
                 if(decode.exp && decode.exp < Date.now()/1000){
-                    await AsyncStorage.removeItem("token");
+                    await AsyncStorage.removeItem('token');
                     gotoWelcomePage();
                     return;
                 }
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
                 gotoHomePage();
             }catch(error){
                 gotoWelcomePage();
-                console.log("failed to decode token",error)
+                console.log('failed to decode token',error)
             }
         }else{
             gotoWelcomePage();
@@ -51,24 +51,24 @@ export const AuthProvider = ({ children }) => {
 
         // wait to show splash screen
         setTimeout(() => {
-            router.replace("(main)/home");
+            router.replace('(main)/home');
         }, 1500);
     };
 
     const gotoWelcomePage = () => {
     // wait to show splash screen
         setTimeout(() => {
-            router.replace("(auth)/welcome");
+            router.replace('(auth)/welcome');
         }, 1500);
     };
 
     const updateToken = async (token) => {
         if (token) {
             setToken(token);
-            await AsyncStorage.setItem("token", token);
+            await AsyncStorage.setItem('token', token);
             // decode token (data)  
             const decoded = jwtDecode(token);
-            console.log("decoded token: ", decoded);
+            console.log('decoded token: ', decoded);
             setUser(decoded.user);
         }
     };
@@ -77,24 +77,23 @@ export const AuthProvider = ({ children }) => {
         const response = await login(email, password);
         await updateToken(response.token);
         await connectSocket();
-        router.replace("(main)/home");
+        router.replace('(main)/home');
     };
 
     const signUp = async (email, password, name, avatar = null) => {
         const response = await register(email, password, name, avatar);
         await updateToken(response.token);
         await connectSocket();
-        router.replace("(main)/home");
-    }
+        router.replace('(main)/home');
+    };
 
-    const signOut = async () =>{
+    const signOut = async () => {
         setToken(null);
         setUser(null);
-        await AsyncStorage.removeItem("token");
+        await AsyncStorage.removeItem('token');
         disconnectSocket();
-        router.replace("/(auth)/welcome")
-
-    }
+        router.replace('/(auth)/welcome');
+    };
 
     return (
         <AuthContext.Provider

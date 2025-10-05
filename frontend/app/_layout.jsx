@@ -7,7 +7,7 @@ const StackLayout = () => {
     return (
         <Stack screenOptions={{ headerShown: false }} />
     );
-}
+};
 
 const RootLayout = () => {
     return (
@@ -15,7 +15,7 @@ const RootLayout = () => {
             <StackLayout/>
         </AuthProvider>
     );
-}
+};
 
 export default RootLayout;
 

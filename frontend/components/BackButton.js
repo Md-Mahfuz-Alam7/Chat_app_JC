@@ -1,4 +1,4 @@
-import react, { use } from "react";
+import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { colors } from "../constants/theme";
 import { useRouter } from "expo-router";
@@ -16,7 +16,7 @@ const BackButton = ({
 }) => {
     const router = useRouter();
     return (
-        <TouchableOpacity onpPress={() => router.back()} style={[styles.button, style]}>
+        <TouchableOpacity onPress={() => router.back()} style={[styles.button, style]}>
             <CaretLeftIcon size={verticalScale(iconSize)} color={color} weight="bold"/>
         </TouchableOpacity>
     );

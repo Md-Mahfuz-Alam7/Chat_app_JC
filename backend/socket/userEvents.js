@@ -1,6 +1,6 @@
 function registerUserEvents(io, socket) {
     socket.on("testSocket", (data) => {
-        socket.emit("msg", "its working!!!");
+        socket.emit("testSocket",{ msg: "Real time update!"});
     });
 }
 

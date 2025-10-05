@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View,  } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import Typo from "../../components/typo";
@@ -15,31 +15,31 @@ const Welcome = () => {
         <ScreenWrapper showPattern={true} bgOpacity={0.5}>
         <View style={styles.container}>
             <View style={{alignItems: 'center'}}>
-                <Typo color={colors.white} size={43} fontWeight={"900"}>
+                <Typo color={colors.white} size={43} fontWeight={'900'}>
                     Syntonic
                 </Typo>
             </View>
 
             <Animated.Image
                 entering={FadeIn.duration(700).springify()}
-                source={require("../../assets/welcome.png")}
+                source={require('../../assets/welcome.png')}
                 style={styles.welcomeImage}
-                resizeMode={"contain"}
+                resizeMode={'contain'}
             />
             <View>
-                <Typo color={colors.white} size={33} fontWeight={"800"}>
+                <Typo color={colors.white} size={33} fontWeight={'800'}>
                     Stay Connected 
                 </Typo>
-                <Typo color={colors.white} size={33} fontWeight={"800"}>
+                <Typo color={colors.white} size={33} fontWeight={'800'}>
                     with your friends 
                 </Typo>
-                <Typo color={colors.white} size={33} fontWeight={"800"}>
+                <Typo color={colors.white} size={33} fontWeight={'800'}>
                     and family 
                 </Typo>
             </View>
 
-            <Button style={{backgroundColor: colors.white}} onPress={() => router.push("/(auth)/register")}>
-                <Typo size={23} fontWeight={"bold"}>Get Started</Typo>
+            <Button style={{backgroundColor: colors.white}} onPress={() => router.push('/(auth)/register')}>
+                <Typo size={23} fontWeight={'bold'}>Get Started</Typo>
             </Button>
                 
         </View>

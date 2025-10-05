@@ -30,7 +30,7 @@ const ScreenWrapper = ({
                 flex: 1,
                 backgroundColor : isModal ? colors.white : colors.neutral900
             }}
-            imageStyle={{ opacity: showPattern ? bgOpacity: 0 }}
+            imageStyle={{ opacity: showPattern ? bgOpacity : 0 }}
             source={require("../assets/bgPattern.png")}
         >
             <View
@@ -40,8 +40,7 @@ const ScreenWrapper = ({
                      paddingBottom,
                      flex: 1,
                    },
-                   style,
-
+                   style
                 ]}>
                     <StatusBar barStyle={'light-content'} backgroundColor={'transparent'}/>
                     {children}

@@ -48,5 +48,5 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: verticalScale(14),
         color: colors.text,
-    }
+    },
 });

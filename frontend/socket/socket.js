@@ -1,4 +1,3 @@
-
 import {API_URL} from "../constants/index";
 import {io} from "socket.io-client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -8,7 +7,7 @@ let socket = null;
 export async function connectSocket() {
     const token = await AsyncStorage.getItem("token");
     if (!token) {
-        throw new Error("No token found. User must login first");
+        throw new Error('No token found. User must login first');
     }
     if (!socket) {
         socket = io(API_URL, {
@@ -17,8 +16,8 @@ export async function connectSocket() {
 
         // wait for connection
         await new Promise((resolve) => {
-            socket?.on("connect", () => {
-                console.log("Connected to socket", socket?.id);
+            socket?.on('connect', () => {
+                console.log('Connected to socket', socket?.id);
                 resolve(true);
             });
         });
