@@ -5,7 +5,23 @@ import { AuthProvider } from "../context/authContext";
 
 const StackLayout = () => {
     return (
-        <Stack screenOptions={{ headerShown: false }} />
+        <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(main)" />
+            {/* <Stack.Screen
+                name="(main)/profileModal"
+                options={{
+                    presentation: "modal",
+                    headerShown: false,
+                }}
+            />
+            <Stack.Screen
+                name="(main)/newConversationModal"
+                options={{
+                    presentation: "modal",
+                    headerShown: false,
+                }}
+            /> */}
+        </Stack>
     );
 };
 
