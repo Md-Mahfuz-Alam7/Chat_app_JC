@@ -4,12 +4,7 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import { colors } from "../constants/theme";
 import { useRouter } from "expo-router";
 const SplashScreen = () => {
-    // const router = useRouter();
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         router.replace("/(auth)/welcome");
-    //     }, 1500);
-    // }, []);
+    // Navigation is handled by authContext based on login status
 
     
     return (

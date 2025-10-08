@@ -4,20 +4,25 @@ import { colors, spacingX, spacingY } from "../constants/theme";
 import Avatar from "./Avatar";
 import Typo from "./typo";
 import moment from "moment";
+import { useAuth } from "../context/authContext";
 
 const ConversationItem = ({ item, showDivider, router }) => {
 
-    const openConversation = () => {
-        console.log("open conversation");
-    }
+    const { user : currentUser} = useAuth();
+
+    // console.log("conversation item: ", item);
 
     const lastMessage = item.lastMessage;
     const isDirect = item.type == "direct";
+    let avatar = item.avatar;
+    const otherParticipant = isDirect? item.participants.find(p => p._id != currentUser?.id) 
+    : null;
+    if(isDirect && otherParticipant) avatar = otherParticipant?.avatar;
 
     const getLastMessageContent = () =>{
         if(!lastMessage) return "Say Hi👋";
 
-        return lastMessage.attachment ? "Image" : lastMessage.content;
+        return lastMessage.attachement ? "Image" : lastMessage.content;
     }
     const getLastMessageTime = () => {
         if (!lastMessage || !lastMessage.createdAt) return null;
@@ -35,8 +40,21 @@ const ConversationItem = ({ item, showDivider, router }) => {
         }
 
             return messageDate.format('MMM D, YYYY');
-
     }
+
+    const openConversation = () => {
+        router.push({
+            pathname: "/(main)/conversation",
+            params: {
+                id: item._id,
+                name: item.name,
+                avatar: item.avatar,
+                type: item.type,
+                participants: JSON.stringify(item.participants)
+            }
+        });
+    }
+
     return (
         <View>
             <TouchableOpacity
@@ -44,7 +62,7 @@ const ConversationItem = ({ item, showDivider, router }) => {
                 onPress={openConversation}
             >
                 <Avatar
-                    uri={null}
+                    uri={avatar}
                     size={47}
                     isGroup={item.type == "group"}
                 />
@@ -52,7 +70,7 @@ const ConversationItem = ({ item, showDivider, router }) => {
                 <View style={{ flex: 1 }}>
                     <View style={styles.row}>
                         <Typo size={17} fontWeight={"600"}>
-                            {item.name}
+                            {isDirect? otherParticipant?.name : item.name}
                         </Typo>
                         {item.lastMessage && 
                             <Typo size={15}>{getLastMessageTime()}</Typo>

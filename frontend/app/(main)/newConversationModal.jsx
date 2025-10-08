@@ -12,20 +12,65 @@ import Typo from '../../components/typo';
 import { useAuth } from '../../context/authContext';
 import Button from '../../components/Button';
 import { verticalScale } from '../../utils/stylling';
+import { useEffect } from 'react';
+import { getContacts, newConversation } from '../../socket/socketEvents';
+import { uploadFIleToClodinary } from '../../services/imageService';
 
 const newConversationModal = () => {
 
     const { isGroup } = useLocalSearchParams();
     const isGroupMode = isGroup == "1";
     const router = useRouter();
+    const [contacts, setContacts] = useState([]);
     const [groupAvatar, setGroupAvatar] = useState(null);
     const [groupName, setGroupName] = useState("");
     const [selectedParticipants, setSelectedParticipants] = useState([]);
-    const [isLoading , setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
-    const {user: currentUser} = useAuth();
+    const { user: currentUser } = useAuth();
 
-    console.log("Is Group :", isGroup); 
+    useEffect(() => {
+        getContacts(processGetContacts);
+        newConversation(processNewConversation);
+        getContacts();
+
+        return () => {
+            getContacts(processGetContacts, true);
+            newConversation(processNewConversation, true);
+        }
+    }, []);
+
+    const processGetContacts = (res) => {
+        console.log("Get Contacts", res);
+        if (res.success) {
+            setContacts(res.data);
+        }
+    };
+
+    const processNewConversation = (res) => {
+        console.log("New conversatin result", res.data.participants);
+        setIsLoading(false);
+        if(res.success){
+            router.back();
+            router.push({
+                pathname: "/(main)/conversation",
+                params:{
+                    id: res.data_id,
+                    name: res.data.name,
+                    avatar: res.data.avatar,
+                    type: res.data.type,
+                    participants: JSON.stringify(res.data.participants)
+                }
+            });
+        }
+        else{
+            console.log("Error fatching/creating conversation", res.msg);
+            Alert.alert("Error", res.msg);
+        }
+    
+    };
+
+    // console.log("Is Group :", isGroup);
 
     const onPickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -41,84 +86,110 @@ const newConversationModal = () => {
         }
     }
 
-    const toggleParticipant = (user) =>{
+    const toggleParticipant = (user) => {
         setSelectedParticipants((prev) => {
-            if(prev.includes(user.id)){
-               return prev.filter((id) => id!= user.id);
+            if (prev.includes(user.id)) {
+                return prev.filter((id) => id != user.id);
             }
             return [...prev, user.id];
         });
     }
     const onSelectUser = (user) => {
-        if(!currentUser){
+        if (!currentUser) {
             Alert.alert("Authentication", "Please login to start a conversation");
             return;
         }
-        if(isGroupMode){
+        if (isGroupMode) {
             toggleParticipant(user);
-        }else{
-            // todo : start a new conversation
+        } else {
+            newConversation({
+                type: "direct",
+                participants: [currentUser.id, user.id]
+            });
+        }
+    };
+
+    const createGroup = async () => {
+        if (!groupName.trim() || !currentUser || selectedParticipants.length < 2) 
+            return;
+
+        setIsLoading(true);
+        try{
+            let avatar = null;
+            if(groupAvatar){
+                const uploadResult = await uploadFIleToClodinary(
+                    groupAvatar, "group-avatars"
+                );
+                if(uploadResult.success) avatar = uploadResult.data;
+            }
+
+            newConversation({
+                type: 'group',
+                name: groupName,
+                avatar,
+                participants: [currentUser.id, ...selectedParticipants]
+            })
+        }catch(error){
+            console.log("Error creating group", error);
+            Alert.alert("Error", error.message);
+        }
+        finally{
+            setIsLoading(false);
         }
     }
 
-    const createGroup = async() =>{
-        if(!groupName.trim() || !currentUser || selectedParticipants.length<2) return;
-        
-        // todo: create group 
-    }
-
-    const contacts = [
-        {
-            id: 1,
-            name: "Sarah Johnson",
-            avatar: "https://randomuser.me/api/portraits/women/1.jpg"
-        },
-        {
-            id: 2,
-            name: "Michael Chen",
-            avatar: "https://randomuser.me/api/portraits/men/2.jpg"
-        },
-        {
-            id: 3,
-            name: "Emma Williams",
-            avatar: "https://randomuser.me/api/portraits/women/3.jpg"
-        },
-        {
-            id: 4,
-            name: "James Rodriguez",
-            avatar: "https://randomuser.me/api/portraits/men/4.jpg"
-        },
-        {
-            id: 5,
-            name: "Olivia Brown",
-            avatar: "https://randomuser.me/api/portraits/women/5.jpg"
-        },
-        {
-            id: 6,
-            name: "David Kim",
-            avatar: "https://randomuser.me/api/portraits/men/6.jpg"
-        },
-        {
-            id: 7,
-            name: "Sophia Martinez",
-            avatar: "https://randomuser.me/api/portraits/women/7.jpg"
-        },
-        {
-            id: 8,
-            name: "Daniel Anderson",
-            avatar: "https://randomuser.me/api/portraits/men/8.jpg"
-        },
-        {
-            id: 9,
-            name: "Isabella Taylor",
-            avatar: "https://randomuser.me/api/portraits/women/9.jpg"
-        },
-        {
-            id: 10,
-            name: "Christopher Lee",
-            avatar: "https://randomuser.me/api/portraits/men/10.jpg"
-        }
-    ];
+    // const contacts = [
+    //     {
+    //         id: 1,
+    //         name: "Sarah Johnson",
+    //         avatar: "https://randomuser.me/api/portraits/women/1.jpg"
+    //     },
+    //     {
+    //         id: 2,
+    //         name: "Michael Chen",
+    //         avatar: "https://randomuser.me/api/portraits/men/2.jpg"
+    //     },
+    //     {
+    //         id: 3,
+    //         name: "Emma Williams",
+    //         avatar: "https://randomuser.me/api/portraits/women/3.jpg"
+    //     },
+    //     {
+    //         id: 4,
+    //         name: "James Rodriguez",
+    //         avatar: "https://randomuser.me/api/portraits/men/4.jpg"
+    //     },
+    //     {
+    //         id: 5,
+    //         name: "Olivia Brown",
+    //         avatar: "https://randomuser.me/api/portraits/women/5.jpg"
+    //     },
+    //     {
+    //         id: 6,
+    //         name: "David Kim",
+    //         avatar: "https://randomuser.me/api/portraits/men/6.jpg"
+    //     },
+    //     {
+    //         id: 7,
+    //         name: "Sophia Martinez",
+    //         avatar: "https://randomuser.me/api/portraits/women/7.jpg"
+    //     },
+    //     {
+    //         id: 8,
+    //         name: "Daniel Anderson",
+    //         avatar: "https://randomuser.me/api/portraits/men/8.jpg"
+    //     },
+    //     {
+    //         id: 9,
+    //         name: "Isabella Taylor",
+    //         avatar: "https://randomuser.me/api/portraits/women/9.jpg"
+    //     },
+    //     {
+    //         id: 10,
+    //         name: "Christopher Lee",
+    //         avatar: "https://randomuser.me/api/portraits/men/10.jpg"
+    //     }
+    // ];
     return (
         <ScreenWrapper isModal={true}>
             <View style={styles.container}>
@@ -155,16 +226,16 @@ const newConversationModal = () => {
                     contentContainerStyle={styles.contactList}
                 >
                     {
-                        contacts.map((user, index) =>{
+                        contacts.map((user, index) => {
 
                             const isSelected = selectedParticipants.includes(user.id);
-                            return(
+                            return (
                                 <TouchableOpacity
                                     key={index}
                                     style={[styles.contactRow, isSelected && styles.selectedContact]}
-                                    onPress={()=> onSelectUser(user)}
+                                    onPress={() => onSelectUser(user)}
                                 >
-                                    <Avatar 
+                                    <Avatar
                                         size={45}
                                         uri={user.avatar}
                                     />
@@ -175,7 +246,7 @@ const newConversationModal = () => {
                                     {
                                         isGroupMode && (
                                             <View style={styles.selectionIndicator}>
-                                                <View style={[styles.checkbox, isSelected && styles.checked]}/>
+                                                <View style={[styles.checkbox, isSelected && styles.checked]} />
 
                                             </View>
 
@@ -188,13 +259,13 @@ const newConversationModal = () => {
                 </ScrollView>
 
                 {
-                    isGroupMode && selectedParticipants.length>=2 && (
+                    isGroupMode && selectedParticipants.length >= 2 && (
                         <View style={styles.createGroupButton} >
                             <Button
                                 onPress={createGroup}
                                 disable={!groupName.trim()}
                                 loading={isLoading}
-                            >   
+                            >
                                 <Typo fontWeight={'bold'} size={17}>
                                     Create Group
                                 </Typo>

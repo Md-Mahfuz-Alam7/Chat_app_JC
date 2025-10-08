@@ -28,7 +28,8 @@ export const uploadFIleToClodinary = async (
             const responese = await axios.post(CLOUDINARY_API_URL, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
-                }
+                },
+                timeout: 6000
             });
             
             return {success:true, data: responese?.data?.secure_url};

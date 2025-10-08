@@ -5,12 +5,13 @@ import Typo from "../../components/typo";
 import { colors, radius, spacingX, spacingY } from "../../constants/theme";
 import { useAuth } from "../../context/authContext";
 import Button from "../../components/Button";
-import { testSocket } from "../../socket/socketEvents";
+import { getConversations, newConversation, newMessage, testSocket } from "../../socket/socketEvents";
 import { verticalScale } from "../../utils/stylling";
 import * as Icons from "phosphor-react-native";
 import { useRouter } from "expo-router";
 import ConversationItem from "../../components/ConversationItem";
 import Loading from "../../components/Loading";
+
 
 const Home = () => {
 
@@ -19,7 +20,48 @@ const Home = () => {
 
     const [selectedTab, setSelectedTab] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [conversations, setConversations] = useState([]);
 
+    useEffect(()=>{
+        getConversations(processConversations);
+        newConversation(newConversationHandler);
+        newMessage(newMessageHandler);
+
+        getConversations();
+
+        return () =>{
+            getConversations(processConversations, true);
+            newConversation(newConversationHandler, true);
+            newMessage(newConversationHandler, true);
+
+        }
+    }, []);
+
+    const newMessageHandler = (res) => {
+        if(res.success){
+            let coversationId = res.data.conversationId;
+            setConversations((prev)=>{
+                let updatedConversations= prev.map((item)=>{
+                    if(item._id == coversationId) item.lastMessage = res.data;
+                    return item;
+                })
+                return updatedConversations;
+            })
+        }
+    }
+
+    const processConversations = (res) =>{
+        // console.log("res:", res);
+        if(res.success) {
+            setConversations(res.data);
+        }
+    }
+
+    const newConversationHandler = (res) =>{
+        if(res.success && res.data?.isNew){
+            setConversations((prev) => [...prev, res.data]);
+        }
+    }
     // console.log("user:",user);
 
     // const testSocketCallBackHandler = (data) =>{
@@ -39,55 +81,55 @@ const Home = () => {
         await signOut();
     }
 
-    const conversationList = [
-        {
-            name: "John Doe",
-            type: "direct",
-            // lastMessage: {
-            //     senderName: "John Doe",
-            //     content: "hello, how are you?",
-                // createdAt: "2025-06-22T18:45:00Z"
-            // }
-        },
-        {
-            name: "Project Team",
-            type: "group",
-            lastMessage: {
-                senderName: "Sara",
-                content: "Hey, the meeting on tonight 9:00PM",
-                createdAt: "2025-06-21T14:10:00Z"
-            }
-        },
-        {
-            name: "Bob",
-            type: "direct",
-            lastMessage: {
-                senderName: "Mom",
-                content: "Can you send the files?",
-                createdAt: "2025-06-20T09:30:00Z"
-            }
-        },
-        {
-            name: "Family Group",
-            type: "group",
-            lastMessage: {
-                senderName: "Mom",
-                content: "Happy birthday!",
-                createdAt: "2025-06-22T07:50:00Z"
-            }
-        },
-        {
-            name: "Charlie",
-            type: "direct",
-            lastMessage: {
-                senderName: "Charlie",
-                content: "Thanks",
-                createdAt: "2025-06-20T11:15:00Z"
-            }
-        },
-    ];
+    // const conversationList = [
+    //     {
+    //         name: "John Doe",
+    //         type: "direct",
+    //         // lastMessage: {
+    //         //     senderName: "John Doe",
+    //         //     content: "hello, how are you?",
+    //             // createdAt: "2025-06-22T18:45:00Z"
+    //         // }
+    //     },
+    //     {
+    //         name: "Project Team",
+    //         type: "group",
+    //         lastMessage: {
+    //             senderName: "Sara",
+    //             content: "Hey, the meeting on tonight 9:00PM",
+    //             createdAt: "2025-06-21T14:10:00Z"
+    //         }
+    //     },
+    //     {
+    //         name: "Bob",
+    //         type: "direct",
+    //         lastMessage: {
+    //             senderName: "Mom",
+    //             content: "Can you send the files?",
+    //             createdAt: "2025-06-20T09:30:00Z"
+    //         }
+    //     },
+    //     {
+    //         name: "Family Group",
+    //         type: "group",
+    //         lastMessage: {
+    //             senderName: "Mom",
+    //             content: "Happy birthday!",
+    //             createdAt: "2025-06-22T07:50:00Z"
+    //         }
+    //     },
+    //     {
+    //         name: "Charlie",
+    //         type: "direct",
+    //         lastMessage: {
+    //             senderName: "Charlie",
+    //             content: "Thanks",
+    //             createdAt: "2025-06-20T11:15:00Z"
+    //         }
+    //     },
+    // ];
 
-    let directConvesations = conversationList
+    let directConvesations = conversations
         .filter((conversation) => conversation.type === "direct")
         .sort((a, b) => {
             const aDate = a.lastMessage?.createdAt || a.createdAt || '1970-01-01';
@@ -95,7 +137,7 @@ const Home = () => {
             return new Date(bDate).getTime() - new Date(aDate).getTime();
         });
 
-    let groupConvesations = conversationList
+    let groupConvesations = conversations
         .filter((conversation) => conversation.type === "group")
         .sort((a, b) => {
             const aDate = a.lastMessage?.createdAt || a.createdAt || '1970-01-01';

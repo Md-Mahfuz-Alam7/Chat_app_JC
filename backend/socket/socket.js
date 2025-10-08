@@ -54,6 +54,8 @@ const dotenv = require('dotenv');
 const { Server } = require('socket.io');
 const jwt = require('jsonwebtoken');
 const { registerUserEvents } = require('./userEvents');
+const { registerChatEvents } = require('./chatEvents');
+const Conversation = require('../modals/Conversation');
 
 dotenv.config();
 
@@ -89,7 +91,22 @@ function InitializeSocket(server) {
        
         // register events
 
+        registerChatEvents(io, socket);
         registerUserEvents(io, socket);
+
+        // join all the conversations the user is part of
+        try{
+            const conversations = await Conversation.find({
+                participants: userId
+            }).select("_id");
+
+            conversations.forEach((conversation) => {
+                socket.join(conversation._id.toString());
+            });
+            
+        }catch(error){
+            console.log("Error joining conversations", error);
+        }
 
         socket.on('disconnect', () => {
             //user logs out

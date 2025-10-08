@@ -6,6 +6,7 @@ import { AuthProvider } from "../context/authContext";
 const StackLayout = () => {
     return (
         <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
             <Stack.Screen name="(main)" />
             {/* <Stack.Screen
                 name="(main)/profileModal"

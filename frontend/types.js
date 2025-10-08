@@ -126,7 +126,7 @@ import {
  * @property {string|null} avatar
  * @property {Array<{_id: string, name: string, avatar: string, email: string}>} participants
  * @property {string} [name]
- * @property {{_id: string, content: string, senderId: string, type: "text"|"image"|"file", attachment?: string, createdAt: string}} [lastMessage]
+ * @property {{_id: string, content: string, senderId: string, type: "text"|"image"|"file", attachement?: string, createdAt: string}} [lastMessage]
  * @property {string} createdAt
  * @property {string} updatedAt
  */
