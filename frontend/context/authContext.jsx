@@ -48,18 +48,17 @@ export const AuthProvider = ({ children }) => {
     };
 
     const gotoHomePage = () => {
-
         // wait to show splash screen
         setTimeout(() => {
             router.replace('(main)/home');
-        }, 1500);
+        }, 800); // Reduced from 1500ms to 800ms
     };
 
     const gotoWelcomePage = () => {
-    // wait to show splash screen
+        // wait to show splash screen
         setTimeout(() => {
             router.replace('(auth)/welcome');
-        }, 1500);
+        }, 800); // Reduced from 1500ms to 800ms
     };
 
     const updateToken = async (token) => {

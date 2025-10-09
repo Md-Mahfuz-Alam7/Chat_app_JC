@@ -9,7 +9,7 @@ import { scale, verticalScale } from '../../utils/stylling';
 import Header from '../../components/Header';
 import BackButton from '../../components/BackButton';
 import Avatar from '../../components/Avatar';
-import * as Icons from 'phosphor-react-native';
+import { Ionicons } from '@expo/vector-icons';
 import MessageItem from '../../components/MessageItem';
 import Input from "../../components/Input";
 import * as ImagePicker from "expo-image-picker";
@@ -254,19 +254,26 @@ const Conversation = () => {
 
     const onPickFile = async () => {
         try {
+            // Request permissions
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Permission Required', 'Sorry, we need camera roll permissions to upload images!');
+                return;
+            }
+
             let result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: 'images',
+                mediaTypes: ['images'],
                 allowsEditing: false,
-                quality: 0.2,
+                quality: 0.3, // Reduced quality for faster upload
                 exif: false,
             });
 
-            if (!result.canceled) {
+            if (!result.canceled && result.assets && result.assets[0]) {
                 setSelectedFile(result.assets[0]);
             }
         } catch (error) {
             console.error('Error picking image:', error);
-            alert('Failed to pick image. Please try again.');
+            Alert.alert('Error', 'Failed to pick image. Please try again.');
         }
     };
 
@@ -277,22 +284,26 @@ const Conversation = () => {
     const onSend = async () => {
         if (!message.trim() && !selectedFile) return;
 
-        if (!currentUser) return;
+        if (!currentUser) {
+            Alert.alert("Error", "User not authenticated");
+            return;
+        }
 
         setLoading(true);
         try {
-            let attachement = null;
+            let attachment = null; // Fixed typo
             if (selectedFile) {
                 const uploadResult = await uploadFIleToClodinary(
                     selectedFile,
-                    "message-attachements"
+                    "message-attachments" // Fixed typo
                 );
 
                 if (uploadResult.success) {
-                    attachement = uploadResult.data;
+                    attachment = uploadResult.data;
                 } else {
                     setLoading(false);
-                    Alert.alert("Error", "Could not send the image");
+                    Alert.alert("Error", uploadResult.msg || "Could not upload the image");
+                    return;
                 }
             }
 
@@ -304,7 +315,7 @@ const Conversation = () => {
                 avatar: currentUser.avatar
                },
                content: message.trim(),
-               attachement
+               attachment // Fixed typo
             });
 
             setMessage("");
@@ -312,7 +323,7 @@ const Conversation = () => {
 
         } catch (error) {
             console.log("Error sending message:", error);
-            Alert.alert("Error", "Failed to send message");
+            Alert.alert("Error", "Failed to send message. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -341,10 +352,7 @@ const Conversation = () => {
                     }
                     rightIcon={
                         <TouchableOpacity style={{ marginBottom: verticalScale(7) }}>
-                            <Icons.DotsThreeOutlineVertical
-                                weight="fill"
-                                color={colors.white}
-                            />
+                            <Ionicons name="ellipsis-vertical" size={20} color={colors.white} />
                         </TouchableOpacity>
                     }
                 />
@@ -385,11 +393,7 @@ const Conversation = () => {
                                             style={styles.iconImage}
                                         />
                                     ) : (
-                                        <Icons.Plus
-                                            color={colors.black}
-                                            weight="bold"
-                                            size={verticalScale(22)}
-                                        />
+                                        <Ionicons name="add" size={verticalScale(22)} color={colors.black} />
                                     )}
                                 </TouchableOpacity>
                             }
@@ -401,11 +405,7 @@ const Conversation = () => {
                                     loading ? (
                                         <Loading size="small" color={colors.black} />
                                     ) : (
-                                        <Icons.PaperPlaneTilt
-                                            color={colors.black}
-                                            weight="fill"
-                                            size={verticalScale(22)}
-                                        />
+                                        <Ionicons name="send" size={verticalScale(22)} color={colors.black} />
                                     )
                                 }
 

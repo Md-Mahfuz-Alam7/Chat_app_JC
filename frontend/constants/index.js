@@ -1,9 +1,6 @@
-import { Platform } from "react-native";
+// API URL from environment variables
+export const API_URL = process.env.EXPO_PUBLIC_API_URL || "http://192.168.0.104:3000";
 
-export const API_URL = Platform.OS === "android" ? "http://10.0.2.2:3000" : "http://localhost:3000";
-
-
-export const CLOUDINARY_CLOUD_NAME = "dc4xcvsbo";
-export const CLOUDINARY_UPLOAD_PRESET = "images";
-// For physical device testing, use your computer's IP:
-// export const API_URL = "http://YOUR_COMPUTER_IP:3000";
+// Cloudinary configuration from environment variables
+export const CLOUDINARY_CLOUD_NAME = process.env.EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME || "dc4xcvsbo";
+export const CLOUDINARY_UPLOAD_PRESET = process.env.EXPO_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "images";

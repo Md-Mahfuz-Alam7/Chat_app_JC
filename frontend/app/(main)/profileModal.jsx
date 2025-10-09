@@ -6,7 +6,7 @@ import ScreenWrapper from "../../components/ScreenWrapper";
 import Header from "../../components/Header";
 import BackButton from "../../components/BackButton";
 import Avatar from "../../components/Avatar";
-import * as Icons from "phosphor-react-native";
+import { Ionicons } from '@expo/vector-icons';
 import Typo from "../../components/typo";
 import Input from "../../components/Input";
 import { useAuth } from "../../context/authContext";
@@ -57,16 +57,30 @@ const ProfileModal = () => {
     }, [user]);
 
     const onPickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ['images'],
-            aspect: [4, 3],
-            quality: 0.5,
-        });
+        try {
+            // Request permissions
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Permission Required', 'Sorry, we need camera roll permissions to upload images!');
+                return;
+            }
 
-        console.log(result);
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ['images'],
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 0.4, // Reduced quality for faster upload
+                exif: false,
+            });
 
-        if (!result.canceled) {
-            setUserData({ ...userData, avatar: result.assets[0] });
+            console.log(result);
+
+            if (!result.canceled && result.assets && result.assets[0]) {
+                setUserData({ ...userData, avatar: result.assets[0] });
+            }
+        } catch (error) {
+            console.error('Error picking image:', error);
+            Alert.alert('Error', 'Failed to pick image. Please try again.');
         }
     }
 
@@ -91,30 +105,35 @@ const ProfileModal = () => {
     const onSubmit = async() => {
         let {name, avatar} = userData;
         if(!name.trim()){
-            Alert.alert("User", "please enter your name");
+            Alert.alert("Error", "Please enter your name");
             return;
         }
 
         let data = {
-            name,
+            name: name.trim(),
             avatar
         }
 
-        if(avatar && avatar?.uri){
-            setLoading(true);
-            const res = await uploadFIleToClodinary(avatar, "profiles");
-            // console.log("result", res);
-            if(res.success){
-                data.avatar = res.data;
-            }else{
-                Alert.alert("User", res.msg);
-                setLoading(false);
-                return;
+        try {
+            if(avatar && avatar?.uri){
+                setLoading(true);
+                const res = await uploadFIleToClodinary(avatar, "profiles");
+                console.log("Upload result:", res);
+                if(res.success){
+                    data.avatar = res.data;
+                }else{
+                    Alert.alert("Error", res.msg || "Could not upload avatar");
+                    setLoading(false);
+                    return;
+                }
             }
-        }
-        
 
-        updateProfile(data);
+            updateProfile(data);
+        } catch (error) {
+            console.log("Error updating profile:", error);
+            Alert.alert("Error", "Failed to update profile. Please try again.");
+            setLoading(false);
+        }
     }
     return (
         <ScreenWrapper isModal={true}>
@@ -131,8 +150,7 @@ const ProfileModal = () => {
                     <View style={styles.avatarContainer}>
                         <Avatar uri={userData.avatar} size={170} />
                         <TouchableOpacity style={styles.editIcon} onPress={onPickImage}>
-                            <Icons.Pencil size={verticalScale(20)} color={colors.neutral800}
-                            />
+                            <Ionicons name="pencil" size={verticalScale(20)} color={colors.neutral800} />
                         </TouchableOpacity>
                     </View>
 
@@ -186,11 +204,7 @@ const ProfileModal = () => {
                                     }}
                                     onPress={showLogoutAlert}
                                 >
-                                    <Icons.SignOut
-                                        size={verticalScale(30)}
-                                        color={colors.white}
-                                        weight="bold"
-                                    />
+                                    <Ionicons name="log-out-outline" size={verticalScale(30)} color={colors.white} />
                                 </Button>
                             )
                         }

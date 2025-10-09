@@ -136,7 +136,7 @@ import {
  * @property {string} id
  * @property {{id: string, name: string, avatar: string|null}} sender
  * @property {string} content
- * @property {string|null} [attachement]
+ * @property {string|null} [attachment] // Fixed typo
  * @property {boolean} [isMe]
  * @property {string} createdAt
  */

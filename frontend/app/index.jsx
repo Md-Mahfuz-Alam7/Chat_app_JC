@@ -1,8 +1,7 @@
-import { StyleSheet, Text, View, StatusBar } from "react-native";
-import React, { useEffect } from "react";
+import { StyleSheet, View, StatusBar } from "react-native";
+import React from "react";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { colors } from "../constants/theme";
-import { useRouter } from "expo-router";
 const SplashScreen = () => {
     // Navigation is handled by authContext based on login status
 

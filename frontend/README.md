@@ -1,50 +1,54 @@
-# Welcome to your Expo app 👋
+# Syntonic Chat App - Frontend
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+React Native mobile application built with Expo for real-time chat functionality.
 
-## Get started
+## Features
 
-1. Install dependencies
+- Real-time messaging
+- User authentication
+- Image sharing with Cloudinary
+- Group conversations
+- Profile management
+- Modern UI with custom themes
 
+## Setup
+
+1. Clone the repository
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-2. Start the app
+3. Create `.env` file based on `.env.example`:
+   ```bash
+   cp .env.example .env
+   ```
 
+4. Update the `.env` file:
+   - `EXPO_PUBLIC_API_URL`: Your backend API URL
+
+5. Start the development server:
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+## Building for Production
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+1. Update `.env` with production backend URL
+2. Build APK:
+   ```bash
+   npx eas build --platform android --profile production
+   ```
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Tech Stack
 
-## Get a fresh project
+- React Native with Expo
+- Expo Router for navigation
+- Socket.io client for real-time communication
+- Expo Image Picker for media handling
+- AsyncStorage for local data
+- Ionicons for UI icons
 
-When you're ready, run:
+## Environment Variables
 
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- `EXPO_PUBLIC_API_URL`: Backend API endpoint

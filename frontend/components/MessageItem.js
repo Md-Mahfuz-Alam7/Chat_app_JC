@@ -54,11 +54,11 @@ const MessageItem = ({
                 }
 
                 {
-                    item.attachement && (
+                    item.attachment && ( // Fixed typo
                         <Image
-                            source={item.attachement}
+                            source={item.attachment} // Fixed typo
                             contentFit="cover"
-                            style={styles.attachement}
+                            style={styles.attachment} // Fixed typo
                             transition={100}
                         />
                     )
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     messageAvatar: {
         alignSelf: "flex-end",
     },
-    attachement: {
+    attachment: { // Fixed typo
         height: verticalScale(180),
         width: verticalScale(180),
         borderRadius: radius._10,

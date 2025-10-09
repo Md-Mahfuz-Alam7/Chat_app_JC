@@ -7,7 +7,7 @@ import { useAuth } from "../../context/authContext";
 import Button from "../../components/Button";
 import { getConversations, newConversation, newMessage, testSocket } from "../../socket/socketEvents";
 import { verticalScale } from "../../utils/stylling";
-import * as Icons from "phosphor-react-native";
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from "expo-router";
 import ConversationItem from "../../components/ConversationItem";
 import Loading from "../../components/Loading";
@@ -161,7 +161,7 @@ const Home = () => {
                     </View>
 
                     <TouchableOpacity style={styles.settingIcon} onPress={() => router.push("/(main)/profileModal")}>
-                        <Icons.GearSix color={colors.white} weight="fill" size={verticalScale(20)} />
+                        <Ionicons name="settings" size={verticalScale(20)} color={colors.white} />
                     </TouchableOpacity>
 
                 </View>
@@ -251,11 +251,7 @@ const Home = () => {
                     })
                 }}
             >
-                <Icons.Plus
-                    color={colors.black}
-                    weight="bold"
-                    size={verticalScale(24)}
-                />
+                <Ionicons name="add" size={verticalScale(24)} color={colors.black} />
             </Button>
         </ScreenWrapper>
     );

@@ -21,7 +21,7 @@ function registerChatEvents(io, socket) {
                 .sort({ updatedAt: -1 })
                 .populate({
                     path: "lastMessage",
-                    select: "content senderId attachement createdAt",
+                    select: "content senderId attachment createdAt", // Fixed typo
                 })
                 .populate({
                     path: "participants",
@@ -123,7 +123,7 @@ function registerChatEvents(io, socket) {
                 conversationId: data.conversationId,
                 senderId: data.sender.id,
                 content: data.content,
-                attachement: data.attachement,
+                attachment: data.attachment, // Fixed typo
             });
 
             io.to(data.conversationId).emit("newMessage", {
@@ -136,7 +136,7 @@ function registerChatEvents(io, socket) {
                         name: data.sender.name,
                         avatar: data.sender.avatar,
                     },
-                    attachement: message.attachement,
+                    attachment: message.attachment, // Fixed typo
                     createdAt: message.createdAt,
                     conversationId: message.conversationId,
                 },

@@ -22,7 +22,7 @@ const ConversationItem = ({ item, showDivider, router }) => {
     const getLastMessageContent = () =>{
         if(!lastMessage) return "Say Hi👋";
 
-        return lastMessage.attachement ? "Image" : lastMessage.content;
+        return lastMessage.attachment ? "📷 Image" : lastMessage.content; // Fixed typo and added emoji
     }
     const getLastMessageTime = () => {
         if (!lastMessage || !lastMessage.createdAt) return null;

@@ -5,7 +5,7 @@ import Typo from "../../components/typo";
 import { colors, radius, spacingX, spacingY } from "../../constants/theme";
 import BackButton from "../../components/BackButton";
 import Input from "../../components/Input";
-import * as Icons from 'phosphor-react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { verticalScale } from "../../utils/stylling";
 import { useRouter } from "expo-router";
 import Button from "../../components/Button";
@@ -59,29 +59,32 @@ const Register = () => {
                                 <Typo color={colors.neutral600}>Create an account to continue</Typo>
                             </View>
 
-                            <Input 
+                            <Input
                                 placeholder={'Enter Your Full Name'}
                                 onChangeText={value => nameRef.current = value}
-                                icon={<Icons.User 
-                                    size={verticalScale(26)} 
-                                    color={colors.neutral600} 
+                                icon={<Ionicons
+                                    name="person-outline"
+                                    size={verticalScale(26)}
+                                    color={colors.neutral600}
                                 />}
                             />
-                             <Input 
+                             <Input
                                 placeholder={'Enter Your Email'}
                                 onChangeText={value => emailRef.current = value}
-                                icon={<Icons.At 
-                                    size={verticalScale(26)} 
-                                    color={colors.neutral600} 
+                                icon={<Ionicons
+                                    name="mail-outline"
+                                    size={verticalScale(26)}
+                                    color={colors.neutral600}
                                 />}
                             />
-                             <Input 
+                             <Input
                                 placeholder={'Enter Your Password'}
                                 secureTextEntry
                                 onChangeText={value => passwordRef.current = value}
-                                icon={<Icons.Lock 
-                                    size={verticalScale(26)} 
-                                    color={colors.neutral600} 
+                                icon={<Ionicons
+                                    name="lock-closed-outline"
+                                    size={verticalScale(26)}
+                                    color={colors.neutral600}
                                 />}
                             />
 

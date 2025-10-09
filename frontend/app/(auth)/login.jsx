@@ -5,7 +5,7 @@ import Typo from "../../components/typo";
 import { colors, radius, spacingX, spacingY } from "../../constants/theme";
 import BackButton from "../../components/BackButton";
 import Input from "../../components/Input";
-import * as Icons from 'phosphor-react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { verticalScale } from "../../utils/stylling";
 import { useRouter } from "expo-router";
 import Button from "../../components/Button";
@@ -62,7 +62,8 @@ const Login = () => {
                             <Input
                                 placeholder={'Enter Your Email'}
                                 onChangeText={value => emailRef.current = value}
-                                icon={<Icons.At
+                                icon={<Ionicons
+                                    name="mail-outline"
                                     size={verticalScale(26)}
                                     color={colors.neutral600}
                                 />}
@@ -71,7 +72,8 @@ const Login = () => {
                                 placeholder={'Enter Your Password'}
                                 secureTextEntry
                                 onChangeText={value => passwordRef.current = value}
-                                icon={<Icons.Lock
+                                icon={<Ionicons
+                                    name="lock-closed-outline"
                                     size={verticalScale(26)}
                                     color={colors.neutral600}
                                 />}

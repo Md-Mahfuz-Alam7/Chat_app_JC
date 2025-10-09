@@ -48,41 +48,54 @@ const newConversationModal = () => {
     };
 
     const processNewConversation = (res) => {
-        console.log("New conversatin result", res.data.participants);
+        console.log("New conversation result", res);
         setIsLoading(false);
         if(res.success){
-            router.back();
-            router.push({
+            // Use router.replace instead of router.back() + router.push() to avoid navigation issues
+            router.replace({
                 pathname: "/(main)/conversation",
                 params:{
-                    id: res.data_id,
-                    name: res.data.name,
-                    avatar: res.data.avatar,
+                    id: res.data._id, // Fixed: was res.data_id
+                    name: res.data.name || (res.data.type === 'direct' ? 'Direct Message' : 'Group Chat'),
+                    avatar: res.data.avatar || '',
                     type: res.data.type,
                     participants: JSON.stringify(res.data.participants)
                 }
             });
         }
         else{
-            console.log("Error fatching/creating conversation", res.msg);
-            Alert.alert("Error", res.msg);
+            console.log("Error fetching/creating conversation", res.msg);
+            Alert.alert("Error", res.msg || "Failed to create conversation");
         }
-    
     };
 
     // console.log("Is Group :", isGroup);
 
     const onPickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ['images'],
-            aspect: [4, 3],
-            quality: 0.5,
-        });
+        try {
+            // Request permissions
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Permission Required', 'Sorry, we need camera roll permissions to upload images!');
+                return;
+            }
 
-        console.log(result);
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ['images'],
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 0.4, // Reduced quality for faster upload
+                exif: false,
+            });
 
-        if (!result.canceled) {
-            setGroupAvatar(result.assets[0]);
+            console.log(result);
+
+            if (!result.canceled && result.assets && result.assets[0]) {
+                setGroupAvatar(result.assets[0]);
+            }
+        } catch (error) {
+            console.error('Error picking image:', error);
+            Alert.alert('Error', 'Failed to pick image. Please try again.');
         }
     }
 
@@ -110,8 +123,20 @@ const newConversationModal = () => {
     };
 
     const createGroup = async () => {
-        if (!groupName.trim() || !currentUser || selectedParticipants.length < 2) 
+        if (!groupName.trim()) {
+            Alert.alert("Error", "Please enter a group name");
             return;
+        }
+
+        if (!currentUser) {
+            Alert.alert("Error", "User not authenticated");
+            return;
+        }
+
+        if (selectedParticipants.length < 2) {
+            Alert.alert("Error", "Please select at least 2 participants for a group");
+            return;
+        }
 
         setIsLoading(true);
         try{
@@ -120,20 +145,22 @@ const newConversationModal = () => {
                 const uploadResult = await uploadFIleToClodinary(
                     groupAvatar, "group-avatars"
                 );
-                if(uploadResult.success) avatar = uploadResult.data;
+                if(uploadResult.success) {
+                    avatar = uploadResult.data;
+                } else {
+                    Alert.alert("Warning", "Could not upload group avatar, but group will be created without it");
+                }
             }
 
             newConversation({
                 type: 'group',
-                name: groupName,
+                name: groupName.trim(),
                 avatar,
                 participants: [currentUser.id, ...selectedParticipants]
             })
         }catch(error){
             console.log("Error creating group", error);
-            Alert.alert("Error", error.message);
-        }
-        finally{
+            Alert.alert("Error", "Failed to create group. Please try again.");
             setIsLoading(false);
         }
     }
