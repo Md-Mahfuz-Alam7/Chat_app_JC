@@ -12,7 +12,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://10.0.2.2:3000', 'http://192.168.1.*', 'https://your-frontend-domain.com'],
+    origin: ['http://localhost:3000', 'http://10.0.2.2:3000', 'http://192.168.1.*', '*'],
     credentials: true
 }));
 
